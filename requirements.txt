@@ -4,3 +4,4 @@ pydantic>=1.2.0,<2.0.0
 evidently==0.4.3
 SQLAlchemy==2.0.20
 psycopg2-binary==2.9.7
+pyarrow
