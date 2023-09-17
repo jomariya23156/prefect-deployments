@@ -31,9 +31,25 @@ deployments:
   tags: []
   description: "Say Hi Mom!"
   schedule: {}
-  entrypoint: hi_mom/hi_mom.py:marvin_flow
+  entrypoint: all_flows.py:hi_mom_flow
   parameters: {}
   work_pool:
-    name: production-model-pool
+    name: "{{ prefect.variables.monitor_pool_name }}"
+    work_queue_name: null
+    job_variables: {}
+- name: drift_detection_evidently
+  version: null
+  tags: []
+  description: "Compute Evidently Reports and Test suites to detect data drift"
+  schedule: {}
+  entrypoint: all_flows.py:detect_drift_flow
+  parameters: 
+    model_metadata_file_path: "{{ prefect.variables.current_model_metadata_file }}"
+    last_days: 7
+    last_n: 500
+    evidently_project_name: "production_model_monitor"
+    evidently_project_desc: "Dashboard for monitoring production models"
+  work_pool:
+    name: "{{ prefect.variables.monitor_pool_name }}"
     work_queue_name: null
     job_variables: {}
