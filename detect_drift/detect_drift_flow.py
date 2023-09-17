@@ -10,6 +10,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.automap import automap_base
 from prefect import task, flow, get_run_logger
+from prefect import variables
 
 from evidently.ui.remote import RemoteWorkspace
 
@@ -28,12 +29,12 @@ CENTRAL_STORAGE_PATH = os.getenv('CENTRAL_STORAGE_PATH', '/service/central_stora
 # might have to create Prefect variables to store model_metadata.yml path
 # then reference those variables in prefect.yaml and pass in as parameters to this flow function
 @flow(name='detect_drift_with_evidently')
-def detect_drift_flow(model_metadata_file_path: str, last_days: Optional[int]=7, last_n: Optional[int]=500,
-                 evidently_project_name: Optional[str]='production_model_monitor',
-                 evidently_project_desc: Optional[str]='Dashboard for monitoring production models'):
+def detect_drift_flow(model_metadata_file_path: str=variables.get('current_model_metadata_file'), 
+                      last_days: Optional[int]=7, last_n: Optional[int]=500,
+                     evidently_project_name: Optional[str]='production_model_monitor',
+                     evidently_project_desc: Optional[str]='Dashboard for monitoring production models'):
     logger = get_run_logger()
-    logger.debug(f"Received model_metadata_file_path: {model_metadata_file_path}")
-    if not model_metadata_file_path.endswith(('.yaml', '.yml')):
+    if model_metadata_file_path is None or not model_metadata_file_path.endswith(('.yaml', '.yml')):
         raise ValueError("Invalid format. Parameter model_metadata_file_path does not end with .yaml or .yml. "+\
                         f"Received: {model_metadata_file_path}")
     logger.info(f"Loading the model metadata from {os.path.join(CENTRAL_STORAGE_PATH, 'models', model_metadata_file_path)}")

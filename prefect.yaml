@@ -44,7 +44,7 @@ deployments:
   schedule: {}
   entrypoint: all_flows.py:detect_drift_flow
   parameters: 
-    model_metadata_file_path: "{{ prefect.variables.current_model_metadata_file }}"
+    # model_metadata_file_path: "{{ prefect.variables.current_model_metadata_file }}"
     last_days: 7
     last_n: 500
     evidently_project_name: "production_model_monitor"
