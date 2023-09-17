@@ -40,11 +40,18 @@ deployments:
 - name: drift_detection_evidently
   version: null
   tags: []
-  description: "Compute Evidently Reports and Test suites to detect data drift"
-  schedule: {}
+  description: >
+      Compute Evidently Reports and Test suites to detect data drift
+      
+      **Note**: the parameter `model_metadata_file_path` is replaced with the Prefect variable
+      named `current_model_metadata_file` at run time for automation purposes. 
+      Change this behavior at the header of the `detect_drift_flow` function in `detect_drift/detect_drift_flow.py`
+  schedule:
+    # run every 7 days aka weekly aka once a week
+    rrule: 'FREQ=DAILY;INTERVAL=7'
   entrypoint: all_flows.py:detect_drift_flow
   parameters: 
-    # model_metadata_file_path: "{{ prefect.variables.current_model_metadata_file }}"
+    # set default flow parameters
     last_days: 7
     last_n: 500
     evidently_project_name: "production_model_monitor"

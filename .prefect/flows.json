@@ -1,3 +1,4 @@
 {
+  "Hi Mom Flow": "all_flows.py:hi_mom_flow",
   "detect_drift_with_evidently": "all_flows.py:detect_drift_flow"
 }

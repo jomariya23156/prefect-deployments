@@ -20,7 +20,7 @@ from .utils import (open_db_session, get_cur_df_from_query, convert_pred_json_to
                     create_col_mapping, retrieve_metadata_file, query_last_rows, retrieve_ref_data_df)
 
 POSTGRES_PORT = os.getenv('POSTGRES_PORT', '5432')
-EVIDENTLY_PORT = os.getenv('EVIDENTLY_PORT', '8080')
+EVIDENTLY_PORT = os.getenv('EVIDENTLY_PORT', '8000')
 EVIDENTLY_URL = os.getenv('EVIDENTLY_URL', f'http://evidently:{EVIDENTLY_PORT}')
 DB_CONNECTION_URL = os.getenv('DB_CONNECTION_URL', f'postgresql://dlservice_user:SuperSecurePwdHere@postgres:{POSTGRES_PORT}/dlservice_pg_db')
 DB_PREDICTION_TABLE_NAME = os.getenv('DB_PREDICTION_TABLE_NAME', 'predictions')
@@ -35,7 +35,8 @@ def detect_drift_flow(model_metadata_file_path: str=variables.get('current_model
                      evidently_project_desc: Optional[str]='Dashboard for monitoring production models'):
     logger = get_run_logger()
     logger.info(f"Received model_metadata_file_path: {model_metadata_file_path}")
-    if model_metadata_file_path is None or not model_metadata_file_path.endswith(('.yaml', '.yml')):
+    logger.info(f"Compute data drift base on data from the last {last_days} days & last {last_n} rows")
+    if (model_metadata_file_path is None) or (not model_metadata_file_path.endswith(('.yaml', '.yml'))):
         raise ValueError("Invalid format. Parameter model_metadata_file_path does not end with .yaml or .yml. "+\
                         f"Received: {model_metadata_file_path}")
     logger.info(f"Loading the model metadata from {os.path.join(CENTRAL_STORAGE_PATH, 'models', model_metadata_file_path)}")
