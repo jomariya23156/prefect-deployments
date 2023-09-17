@@ -1,0 +1,3 @@
+{
+  "detect_drift_with_evidently": "all_flows.py:detect_drift_flow"
+}

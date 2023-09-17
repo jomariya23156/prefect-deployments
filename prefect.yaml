@@ -34,7 +34,7 @@ deployments:
   entrypoint: all_flows.py:hi_mom_flow
   parameters: {}
   work_pool:
-    name: "{{ prefect.variables.monitor_pool_name }}"
+    name: production-model-pool
     work_queue_name: null
     job_variables: {}
 - name: drift_detection_evidently
@@ -50,6 +50,6 @@ deployments:
     evidently_project_name: "production_model_monitor"
     evidently_project_desc: "Dashboard for monitoring production models"
   work_pool:
-    name: "{{ prefect.variables.monitor_pool_name }}"
+    name: production-model-pool
     work_queue_name: null
     job_variables: {}

@@ -32,6 +32,7 @@ def detect_drift_flow(model_metadata_file_path: str, last_days: Optional[int]=7,
                  evidently_project_name: Optional[str]='production_model_monitor',
                  evidently_project_desc: Optional[str]='Dashboard for monitoring production models'):
     logger = get_run_logger()
+    logger.debug(f"Received model_metadata_file_path: {model_metadata_file_path}")
     if not model_metadata_file_path.endswith(('.yaml', '.yml')):
         raise ValueError("Invalid format. Parameter model_metadata_file_path does not end with .yaml or .yml")
     logger.info(f"Loading the model metadata from {os.path.join(CENTRAL_STORAGE_PATH, 'models', model_metadata_file_path)}")
