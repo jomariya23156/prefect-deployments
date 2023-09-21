@@ -45,6 +45,8 @@ deployments:
       
       **Note**: the parameter `model_metadata_file_path` is replaced with the Prefect variable
       named `current_model_metadata_file` at run time for automation purposes. 
+      Actually the more proper way is to template this prefect.yaml with `prefect.variables`
+      But for some reasons, we tried it and it didn't work. So, we decided to go this way at the time being.
       Change this behavior at the header of the `detect_drift_flow` function in `detect_drift/detect_drift_flow.py`
   schedule:
     # run every 7 days aka weekly aka once a week
