@@ -39,9 +39,11 @@ def detect_drift_flow(model_metadata_file_path: str=variables.get('current_model
     if (model_metadata_file_path is None) or (not model_metadata_file_path.endswith(('.yaml', '.yml'))):
         raise ValueError("Invalid format. Parameter model_metadata_file_path does not end with .yaml or .yml. "+\
                         f"Received: {model_metadata_file_path}")
+    
     logger.info(f"Loading the model metadata from {os.path.join(CENTRAL_STORAGE_PATH, 'models', model_metadata_file_path)}")
     model_metadata = retrieve_metadata_file(model_metadata_file_path)
     classes = model_metadata['classes']
+    model_name = model_metadata['model_name']
     engine = create_engine(DB_CONNECTION_URL)
     Base = automap_base()
     Base.prepare(autoload_with=engine)
@@ -52,7 +54,7 @@ def detect_drift_flow(model_metadata_file_path: str=variables.get('current_model
     if (not last_days) and (not last_n):
         logger.warning('Both last_days & last_n are set to 0 or None, this will retrieve all rows from the table '+\
                        'and can take a long time to compute reports and test suites.')
-    ret = query_last_rows(session, prediction_table_base, last_days, last_n)
+    ret = query_last_rows(session, prediction_table_base, model_name, last_days, last_n)
     
     temp_cur_df = get_cur_df_from_query(ret, use_cols=['id', 'uae_feats', 'bbsd_feats', 'prediction_json'])
     cur_df, cur_num_feat_cols, cur_uae_feat_cols, cur_bbsd_feat_cols = make_cur_evidently_compat(temp_cur_df)

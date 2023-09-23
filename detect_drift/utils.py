@@ -54,19 +54,20 @@ def create_col_mapping(classes, num_feat_cols, uae_feat_cols, bbsd_feat_cols) ->
     
     return column_mapping
 
-def query_last_rows(session, table, last_days, last_n):
+def query_last_rows(session, table, model_name, last_days, last_n):
+    q = session.query(table).filter(table.model_name == model_name)
     if last_days:
         days_ago = datetime.utcnow() - timedelta(days=last_days)
         days_ago_str = days_ago.strftime('%Y-%m-%d %H:%M:%S')
         # Query the rows added in the last 7 days regardless of database time zone
-        q = session.query(table).filter(
+        q = q.filter(
                 func.timezone('UTC', table.created_on) >= days_ago_str
             )
         if last_n:
             q = q.limit(last_n)
         ret = q.all()
     elif last_n:
-        ret = session.query(table).order_by(table.created_on.desc()).limit(last_n).all()
+        ret = q.order_by(table.created_on.desc()).limit(last_n).all()
     else:
-        ret = session.query(table).order_by(table.created_on.desc()).all()
+        ret = q.order_by(table.created_on.desc()).all()
     return ret
