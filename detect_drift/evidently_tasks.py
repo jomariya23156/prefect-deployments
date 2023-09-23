@@ -21,7 +21,7 @@ def create_report() -> Report:
         metrics=[
             ConflictTargetMetric(),
             ConflictPredictionMetric(),
-            # mmd with uae # note: currently, mmd failed. please check docs
+            # mmd with uae
             EmbeddingsDriftMetric('uae', drift_method = mmd(threshold = 0.015, quantile_probability = 0.95)),
             # ks with uae
             EmbeddingsDriftMetric('uae', drift_method = ratio(
@@ -37,7 +37,7 @@ def create_report() -> Report:
                                   )
                                  ),
             # model with uae
-            EmbeddingsDriftMetric('uae', drift_method = model(threshold = 0.75)),
+            EmbeddingsDriftMetric('uae', drift_method = model(threshold = 0.80)),
             # mmd with bbsd
             EmbeddingsDriftMetric('bbsd', drift_method = mmd(threshold = 0.015, quantile_probability = 0.95)),
             # ks with bbsd
@@ -72,7 +72,7 @@ def create_test_suite() -> TestSuite:
                                   )
                                  ),
             # model with uae
-            TestEmbeddingsDrift('uae', drift_method = model(threshold = 0.75)),
+            TestEmbeddingsDrift('uae', drift_method = model(threshold = 0.80)),
             # mmd with bbsd
             TestEmbeddingsDrift('bbsd', drift_method = mmd(threshold = 0.015, quantile_probability = 0.95)),
             # ks with bbsd
@@ -200,7 +200,6 @@ def make_ref_evidently_compat(ref_df: pd.DataFrame, classes: List[str], uae_feat
     
     final_df = pd.concat([num_df, uae_df, bbsd_df], axis=1)
     
-
     # fill columns that exist in cur but not in this ref (prediction cols) with nan
     # to make schema of both ref and cur df identical
     for class_name in classes:

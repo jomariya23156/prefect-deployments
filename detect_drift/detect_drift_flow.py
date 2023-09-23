@@ -55,6 +55,8 @@ def detect_drift_flow(model_metadata_file_path: str=variables.get('current_model
         logger.warning('Both last_days & last_n are set to 0 or None, this will retrieve all rows from the table '+\
                        'and can take a long time to compute reports and test suites.')
     ret = query_last_rows(session, prediction_table_base, model_name, last_days, last_n)
+    if len(ret) == 0:
+        raise Exception('Query result returns 0 row. Incorrect parameters or the service has never been called before.')
     
     temp_cur_df = get_cur_df_from_query(ret, use_cols=['id', 'uae_feats', 'bbsd_feats', 'prediction_json'])
     cur_df, cur_num_feat_cols, cur_uae_feat_cols, cur_bbsd_feat_cols = make_cur_evidently_compat(temp_cur_df)
