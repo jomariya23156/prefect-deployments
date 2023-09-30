@@ -4,7 +4,7 @@
 
 # Generic metadata about this project
 name: mlops-deployments
-prefect-version: 2.12.1
+prefect-version: 2.13.2
 
 # build section allows you to manage and build docker images
 build: null
@@ -34,31 +34,27 @@ deployments:
   entrypoint: all_flows.py:hi_mom_flow
   parameters: {}
   work_pool:
-    name: production-model-pool
+    # name: production-model-pool
+    name: "{{ prefect.variables.monitor_pool_name }}"
     work_queue_name: null
     job_variables: {}
 - name: drift_detection_evidently
   version: null
   tags: []
-  description: >
-      Compute Evidently Reports and Test suites to detect data drift
-      
-      **Note**: the parameter `model_metadata_file_path` is replaced with the Prefect variable
-      named `current_model_metadata_file` at run time for automation purposes. 
-      Actually the more proper way is to template this prefect.yaml with `prefect.variables`
-      But for some reasons, we tried it and it didn't work. So, we decided to go this way at the time being.
-      Change this behavior at the header of the `detect_drift_flow` function in `detect_drift/detect_drift_flow.py`
+  description: Compute Evidently Reports and Test suites to detect data drift
   schedule:
     # run every 7 days aka weekly aka once a week
     rrule: 'FREQ=DAILY;INTERVAL=7'
   entrypoint: all_flows.py:detect_drift_flow
   parameters: 
     # set default flow parameters
+    model_metadata_file_path: "{{ prefect.variables.current_model_metadata_file }}"
     last_days: 7
     last_n: 500
     evidently_project_name: "production_model_monitor"
     evidently_project_desc: "Dashboard for monitoring production models"
   work_pool:
-    name: production-model-pool
+    # name: production-model-pool
+    name: "{{ prefect.variables.monitor_pool_name }}"
     work_queue_name: null
     job_variables: {}
